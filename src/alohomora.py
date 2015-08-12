@@ -1,21 +1,40 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
+# ------------------------------------------------------------------------------
+
+# Copyright reference for passlib
+
+# Passlib
+# Copyright (c) 2008-2012 Assurance Technologies, LLC.
+# All rights reserved.
+
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+# Copyright reference for pyperclip
+
+# pyperclip
+# Copyright (c) 2014, Al Sweigart
+# All rights reserved.
+
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # ------------------------------------------------------------------------------
 
 # imports
-import sys
-import optparse
-import binascii as decoder
-import getpass
-# dependency import
-# passlib
-# license: BSD license
-# https://code.google.com/p/passlib/
+
 from passlib.utils import pbkdf2 as crpyto
-# pyperclip
-# license: https://github.com/asweigart/pyperclip/blob/master/LICENSE.txt
-# https://github.com/asweigart/pyperclip
 import pyperclip
+
+import sys
+import os
+import optparse
+import getpass
+import binascii as decoder
+import hashlib
+import completer
+import readline
+import configparser
 
 # ------------------------------------------------------------------------------
 
@@ -23,61 +42,93 @@ import pyperclip
 
 
 """
-derivePassword
+derive_password
 
 derives a key via a PBKDF2 implementation of passlib
-is uses sha-512 as pseudo random function
 
 """
-def derivePassword(secret, salt, iterations=10000, length=64, algorithm='hmac-sha384'):
+def derive_password(secret, salt, iterations=2901, length=20, algorithm='hmac-sha1'):
     pw = decoder.hexlify(crpyto.pbkdf2(secret, salt, iterations, length, algorithm))
-    copyToClipboard(pw)
     return pw.decode('utf-8')
 
 
 """
-copyToClipboard
+copy_to_clipboard
 
-copy the pw to the system's clipboard
-
-"""
-def copyToClipboard(pw):
-    pyperclip.copy(pw)
-
-
+copys the pw to the system's clipboard
 
 """
-prettyPrint
+def copy_to_clipboard(pw):
+    pyperclip.copy(pw.decode('utf-8'))
 
-adds line reak after every 20th character
 
 """
-def prettyPrint(pw):
-    lines = [pw[i:i+20] for i in range(0, len(pw), 20)]
-    prettypw = ""
-    for line in lines:
-        prettypw = prettypw + "\n" + line if prettypw != "" else line
-    print("\nkey:")
-    print("--------------------")
-    print(prettypw)
-    print("--------------------")
-    print("copied to clipboard\n")
+save_service
+
+adds a new service to the txt file
+
+"""
+def save_service(service):
+    service_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'services.txt')
+    with open(service_path, 'a') as f:
+        f.write(service + '\n')
 
 
 """
 main method
 
-possible arugments:
-interations: Number of iterations of the underlying pseudo-random function
-length: Length of the generated hash
+interactive shell app
 
 """
 if __name__ == "__main__":
-    parser = optparse.OptionParser("usage: alohomora.py [options]")
-    parser.add_option("-i", "--iterations", dest="iterations", default="10000", type="int", help="Number of iterations of the underlying pseudo-random function")
-    parser.add_option("-l", "--length", dest="length", default="64", type="int", help="Length of the generated hash")
-    parser.add_option("-a", "--algorithm", dest="algorithm", default="hmac-sha512", type="string", help="Underlying pseudo-random function: 'hmac-sha1', 'hmac-sha256', 'hmac-sha384', 'hmac-sha512'")
-    (options, args) = parser.parse_args()
-    secret = getpass.getpass("Enter your Secret: ")
-    salt = input("Enter a Salt: ")
-    prettyPrint(derivePassword(bytes(secret, 'utf-8'), bytes(salt, 'utf-8'), options.iterations, options.length, options.algorithm))
+    src_path = os.path.dirname(os.path.realpath(__file__))
+    config_path = os.path.join(src_path, 'config.ini')
+    config = configparser.RawConfigParser()
+    if(not os.path.isfile(config_path)):
+        raise OSError(2, 'No such file or directory', 'config.ini')
+    config.read(config_path)
+    params = dict(config.items('pbkdf'))
+    print('\n~*~*~*~*~*~*~*~*~*~*~*~* Alohomora *~*~*~*~*~*~*~*~*~*~*~*~\n')
+    b = False
+    while(not b):
+        secret = getpass.getpass("Enter your Secret: ")
+        fingerprint = hashlib.sha1(secret.encode('utf-8')).hexdigest()
+        print("\nfingerprint:")
+        print('-------------------')
+        print(fingerprint[0:19] + '\n' + fingerprint[20:39])
+        print('-------------------\n')
+        g = input("ok? (y/n)")
+        while(g != 'n' and g != 'N' and g != 'y' and g != 'Y' and g != ''):
+            g = input("ok? (y/n)")
+        if(g == 'n' or g == 'N'):
+            b = False
+            print("\n------------------------------\n")
+        if(g == 'y' or g == 'Y' or g == ''):
+            b = True
+    print('\n~*~*~*~*~*~*~*~*~*~* Ready for Sorcery *~*~*~*~*~*~*~*~*~*~\n')
+    service_path = os.path.join(src_path, 'services.txt')
+    if(not os.path.isfile(service_path)):
+        raise OSError(2, 'No such file or directory', 'services.txt')
+    services = open(service_path).read().splitlines()
+    text_completer = completer.TextCompleter(services)
+    readline.set_completer(text_completer.complete)
+    readline.parse_and_bind('tab: complete')  
+    while(True):
+        salt = input("Enter a Salt: ")
+        if(salt not in services):
+            g = input("'" + salt + "' is not in your database base yet, wanna add it? (y/n)")
+            while(g != 'n' and g != 'N' and g != 'y' and g != 'Y' and g != ''):
+                g = input("wanna add it? (y/n)")
+            if(g == 'y' or g == 'Y' or g == ''):
+                save_service(salt)
+                text_completer.update(salt)
+                services.append(salt)
+                print("~~~ '" + salt + "' was added to your database ~~~")
+            if(g == 'n' or g == 'N'):
+                print("~~~ '" + salt + "' is used just this time ~~~")
+        password = derive_password(bytes(secret, 'utf-8'), bytes(salt, 'utf-8'), int(params['iterations']), int(params['length']), params['algorithm'])
+        pyperclip.copy(password)
+        print()
+        print('first 5 letters: ' + password[0:5])
+        print('~~~ copied to clipboard ~~~')
+        print("\n------------------------------\n")
