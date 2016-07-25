@@ -3,10 +3,11 @@
 # ------------------------------------------------------------------------------
 
 # I found this snippet on stackoverflow
-# soruce: http://stackoverflow.com/questions/7821661/how-to-code-autocompletion-in-python
+# source: http://stackoverflow.com/questions/7821661/how-to-code-autocompletion-in-python
 # user: Shawn Chin
 
 # ------------------------------------------------------------------------------
+
 
 class TextCompleter(object):
 
@@ -14,17 +15,17 @@ class TextCompleter(object):
         self.options = sorted(options)
 
     def complete(self, text, state):
-        if state == 0:  
+        if state == 0:
             if text:
-                self.matches = [s for s in self.options 
-                                    if s and s.startswith(text)]
+                self.matches = [s for s in self.options
+                                if s and s.startswith(text)]
             else:
                 self.matches = self.options[:]
-        try: 
+        try:
             return self.matches[state]
         except IndexError:
             return None
-            
+
     def update(self, s):
         l = self.options
         l.append(s)
