@@ -20,12 +20,13 @@
 
 # ------------------------------------------------------------------------------
 
-# imports
-
+# Python
 from math import ceil, log
 import re
-from passlib.utils import pbkdf2
+
+# PIP
 from bitstring import BitString as bit
+from passlib.utils import pbkdf2
 
 # ------------------------------------------------------------------------------
 

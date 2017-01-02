@@ -2,11 +2,11 @@
 
 # ------------------------------------------------------------------------------
 
-# imports
-
-import sqlite3
+# Python
 from os import path
-import binascii
+import sqlite3
+
+# Alohomora
 from salt import gen_salt
 
 # ------------------------------------------------------------------------------
