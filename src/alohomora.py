@@ -106,11 +106,11 @@ def get_password(secret):
             account)
         password = pw_gen.get_password(
             secret, salt, length, lowercase, uppercase, numbers, specials)
-        pyperclip.copy(password)
-        print()
-        print('first 5 letters: ' + password[0:5])
-        print('~~~ copied to clipboard ~~~')
-        print("\n------------------------------\n")
+        print(password)
+        # print()
+        # print('first 5 letters: ' + password[0:5])
+        # print('~~~ copied to clipboard ~~~')
+        # print("\n------------------------------\n")
 
 
 def edit_mode():
