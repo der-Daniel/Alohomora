@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------------
 
 # Python
-from os import path
+from os import path, makedirs
 import sqlite3
 
 # Alohomora
@@ -12,11 +12,13 @@ from salt import gen_salt
 # ------------------------------------------------------------------------------
 
 
-db_file = path.join(path.dirname(
-    path.realpath(__file__)), 'database/db.sqlite3')
+db_path = path.dirname(path.realpath(__file__))
+db_file = path.join(db_path, 'database/db.sqlite3')
 
 
 def init():
+    if(not path.exists(db_path)):
+        makedirs(db_path)
     con = sqlite3.connect(db_file)
     cur = con.cursor()
     cur.execute("""
