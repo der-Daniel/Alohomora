@@ -5,8 +5,6 @@
 # Python
 from os import path
 import sys
-
-# Alohomora
 import configparser as cp
 
 # ------------------------------------------------------------------------------

@@ -6,9 +6,9 @@
 import readline
 
 # Alohomora
-import completer
-import db
-import shell_io
+from app import completer
+from app import db
+from app import shell_io
 
 # ------------------------------------------------------------------------------
 

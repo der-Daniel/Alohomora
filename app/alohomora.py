@@ -33,13 +33,13 @@ import getpass
 import readline
 
 # Alohomora
-import add_account
-import db
-import completer
-import delete_account
-import edit_account
-import pw_gen
-import shell_io
+from app import add_account
+from app import db
+from app import completer
+from app import delete_account
+from app import edit_account
+from app import pw_gen
+from app import shell_io
 
 # ------------------------------------------------------------------------------
 
@@ -55,8 +55,8 @@ def init():
         print('If this is the first time you use Alohomora, you can create\n\
 a new database.\n')
         print('What do you want me to do?')
-        g = shell_io.key_input('(C)reate new one, (E)xit: ', ['c', 'C', 'e', 'E'])
-        if(g == 'E' or g == 'e'):
+        g = shell_io.key_input('(C)reate new one, E(x)it: ', ['c', 'C', 'x', 'X'])
+        if(g == 'X' or g == 'x'):
             sys.exit(0)
         else:
             db.init()
@@ -127,13 +127,11 @@ def edit_mode():
         print('')
 
 
-if __name__ == "__main__":
+def start(edit=False):
     print('\n~*~*~*~*~*~*~*~*~*~*~*~* Alohomora *~*~*~*~*~*~*~*~*~*~*~*~\n')
-    if(len(sys.argv) > 1):
-        flag = sys.argv[1]
-        if(flag == '-e'):
-            edit_mode()
-    if(len(sys.argv) <= 1):
+    if(edit):
+        edit_mode()
+    else:
         init()
         secret = enter_secret()
         print('\n~*~*~*~*~*~*~*~*~*~* Ready for Sorcery *~*~*~*~*~*~*~*~*~*~\n')

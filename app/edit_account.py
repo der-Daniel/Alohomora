@@ -2,10 +2,13 @@
 
 # ------------------------------------------------------------------------------
 
-import completer
+# PIP
 import readline
-import db
-import shell_io
+
+# Alohomora
+from app import completer
+from app import db
+from app import shell_io
 
 # ------------------------------------------------------------------------------
 

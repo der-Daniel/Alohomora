@@ -7,13 +7,13 @@ from os import path, makedirs
 import sqlite3
 
 # Alohomora
-from salt import gen_salt
+from app.salt import gen_salt
 
 # ------------------------------------------------------------------------------
 
 
-db_path = path.dirname(path.realpath(__file__))
-db_file = path.join(db_path, 'database/db.sqlite3')
+db_path = path.join(path.dirname(path.realpath(__file__)), 'database')
+db_file = path.join(db_path, 'db.sqlite3')
 
 
 def init():

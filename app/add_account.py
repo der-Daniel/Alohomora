@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------------------
 
 # Alohomora
-import config
-import db
-import shell_io
+from app import config
+from app import db
+from app import shell_io
 
 # ------------------------------------------------------------------------------
 
