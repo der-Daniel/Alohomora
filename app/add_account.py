@@ -24,7 +24,7 @@ def add(name):
     print('')
     print('However some web services have some ridiculous limitations...')
     print('Keep the default configurations?')
-    g = shell_io.key_input('(Y)es, (No): ', ['y', 'Y', 'n', 'N', ''])
+    g = shell_io.key_input('(Y)es, (N)o: ', ['y', 'Y', 'n', 'N', ''])
     if(g == 'n' or g == 'N'):
         length = shell_io.get_length(length)
         lowercase = shell_io.get_lowercase(lowercase)
